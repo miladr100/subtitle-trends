@@ -1,7 +1,7 @@
-import { VApp } from "vuetify/lib/components"
+import "./styles.scss"
 
 export default {
-  name: "App",
+  name: "CPill",
   props: {
     name: {
       type: String,
@@ -17,10 +17,10 @@ export default {
   }),
   render(h) {
     return (
-      <VApp>
-        <span>{this.name}</span>
-        <span>{this.amount}</span>
-      </VApp>
+      <div class="c-pill">
+        <span class="c-pill__name">{this.name}</span>
+        <span class="c-pill__amount">{this.amount}</span>
+      </div>
     )
   }
 }
