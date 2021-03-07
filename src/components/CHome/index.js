@@ -1,4 +1,4 @@
-import { VContainer, VForm, VFileInput } from "vuetify/lib/components"
+import { VContainer, VForm, VFileInput, VBtn } from "vuetify/lib/components"
 
 import CPill from "../CPill"
 
@@ -10,29 +10,19 @@ export default {
   name: "Home",
   data: () => ({
     files: [],
-    groupedWords: [
-      { name: "you", amount: 900 },
-      { name: "i", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "she", amount: 900 },
-      { name: "it", amount: 900 }
-    ]
+    groupedWords: []
   }),
   methods: {
     processSubtitles() {
-      console.log(this.files)
-
-      ipcRenderer.send("milad", "ping")
-      ipcRenderer.on("milad", (event, resp) => {
-        console.log(resp)
+      const paths = this.files.map(file => file.path)
+      ipcRenderer.send("process-subtitles", paths)
+      ipcRenderer.on("process-subtitles", (event, resp) => {
+        this.groupedWords = resp
       })
+    },
+    resetVariables() {
+      this.files = []
+      this.groupedWords = []
     }
   },
   render(h) {
@@ -48,9 +38,18 @@ export default {
               multiple
               chips
               vModel={this.files}
-              onClick={this.processSubtitles}
             />
           </VForm>
+          <VBtn
+            onClick={() =>
+              this.files.length == 0
+                ? console.log("Please choose a file at least")
+                : this.processSubtitles()
+            }
+          >
+            Submit
+          </VBtn>
+          <VBtn onClick={this.resetVariables}>Reset</VBtn>
           <div class="c-pills">
             {this.groupedWords.map(word => (
               <CPill name={word.name} amount={word.amount} />
